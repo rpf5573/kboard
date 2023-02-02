@@ -192,6 +192,10 @@ class KBContentList {
 		}
 		return $this;
 	}
+
+  public function getRpp() {
+    return $this->rpp;
+  }
 	
 	/**
 	 * 카테고리1을 입력한다.
@@ -704,7 +708,7 @@ class KBContentList {
 		$from = apply_filters('kboard_list_from', implode(' ', $this->from), $this->board_id, $this);
 		$where = apply_filters('kboard_list_where', implode(' AND ', $this->where), $this->board_id, $this);
 		$orderby = apply_filters('kboard_list_orderby', "{$this->sort} {$this->order}", $this->board_id, $this);
-		
+
 		$offset = ($this->page-1)*$this->rpp;
 		
 		if($default_select != $select){

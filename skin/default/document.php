@@ -8,33 +8,18 @@
 			<div class="kboard-detail">
 				<?php if($content->category1):?>
 				<div class="detail-attr detail-category1">
-					<div class="detail-name"><?php echo esc_html($content->category1)?></div>
+					<div class="detail-name"><?php echo $content->category1?></div>
 				</div>
 				<?php endif?>
 				<?php if($content->category2):?>
 				<div class="detail-attr detail-category2">
-					<div class="detail-name"><?php echo esc_html($content->category2)?></div>
-				</div>
-				<?php endif?>
-				<?php if($content->category3):?>
-				<div class="detail-attr detail-category3">
-					<div class="detail-name"><?php echo esc_html($content->category3)?></div>
-				</div>
-				<?php endif?>
-				<?php if($content->category4):?>
-				<div class="detail-attr detail-category4">
-					<div class="detail-name"><?php echo esc_html($content->category4)?></div>
-				</div>
-				<?php endif?>
-				<?php if($content->category5):?>
-				<div class="detail-attr detail-category5">
-					<div class="detail-name"><?php echo esc_html($content->category5)?></div>
+					<div class="detail-name"><?php echo $content->category2?></div>
 				</div>
 				<?php endif?>
 				<?php if($content->option->tree_category_1):?>
 				<?php for($i=1; $i<=$content->getTreeCategoryDepth(); $i++):?>
 				<div class="detail-attr detail-tree-category-<?php echo $i?>">
-					<div class="detail-name"><?php echo esc_html($content->option->{'tree_category_'.$i})?></div>
+					<div class="detail-name"><?php echo $content->option->{'tree_category_'.$i}?></div>
 				</div>
 				<?php endfor?>
 				<?php endif?>
@@ -60,12 +45,10 @@
 			</div>
 			
 			<div class="kboard-document-action">
-				<?php if(!$board->meta->permission_vote_hide):?>
-					<div class="left">
-						<button type="button" class="kboard-button-action kboard-button-like" onclick="kboard_document_like(this)" data-uid="<?php echo $content->uid?>" title="<?php echo __('Like', 'kboard')?>"><?php echo __('Like', 'kboard')?> <span class="kboard-document-like-count"><?php echo intval($content->like)?></span></button>
-						<button type="button" class="kboard-button-action kboard-button-unlike" onclick="kboard_document_unlike(this)" data-uid="<?php echo $content->uid?>" title="<?php echo __('Unlike', 'kboard')?>"><?php echo __('Unlike', 'kboard')?> <span class="kboard-document-unlike-count"><?php echo intval($content->unlike)?></span></button>
-					</div>
-				<?php endif?>
+				<div class="left">
+					<button type="button" class="kboard-button-action kboard-button-like" onclick="kboard_document_like(this)" data-uid="<?php echo $content->uid?>" title="<?php echo __('Like', 'kboard')?>"><?php echo __('Like', 'kboard')?> <span class="kboard-document-like-count"><?php echo intval($content->like)?></span></button>
+					<button type="button" class="kboard-button-action kboard-button-unlike" onclick="kboard_document_unlike(this)" data-uid="<?php echo $content->uid?>" title="<?php echo __('Unlike', 'kboard')?>"><?php echo __('Unlike', 'kboard')?> <span class="kboard-document-unlike-count"><?php echo intval($content->unlike)?></span></button>
+				</div>
 				<div class="right">
 					<button type="button" class="kboard-button-action kboard-button-print" onclick="kboard_document_print('<?php echo $url->getDocumentPrint($content->uid)?>')" title="<?php echo __('Print', 'kboard')?>"><?php echo __('Print', 'kboard')?></button>
 				</div>
@@ -92,7 +75,7 @@
 				$bottom_content = new KBContent();
 				$bottom_content->initWithUID($bottom_content_uid);
 				?>
-				<a href="<?php echo esc_url($url->getDocumentURLWithUID($bottom_content_uid))?>" title="<?php echo esc_attr(wp_strip_all_tags($bottom_content->title))?>">
+				<a href="<?php echo $url->getDocumentURLWithUID($bottom_content_uid)?>" title="<?php echo esc_attr(wp_strip_all_tags($bottom_content->title))?>">
 					<span class="navi-arrow">«</span>
 					<span class="navi-document-title kboard-default-cut-strings"><?php echo wp_strip_all_tags($bottom_content->title)?></span>
 				</a>
@@ -106,7 +89,7 @@
 				$top_content = new KBContent();
 				$top_content->initWithUID($top_content_uid);
 				?>
-				<a href="<?php echo esc_url($url->getDocumentURLWithUID($top_content_uid))?>" title="<?php echo esc_attr(wp_strip_all_tags($top_content->title))?>">
+				<a href="<?php echo $url->getDocumentURLWithUID($top_content_uid)?>" title="<?php echo esc_attr(wp_strip_all_tags($top_content->title))?>">
 					<span class="navi-document-title kboard-default-cut-strings"><?php echo wp_strip_all_tags($top_content->title)?></span>
 					<span class="navi-arrow">»</span>
 				</a>
@@ -116,13 +99,13 @@
 		
 		<div class="kboard-control">
 			<div class="left">
-				<a href="<?php echo esc_url($url->getBoardList())?>" class="kboard-default-button-small"><?php echo __('List', 'kboard')?></a>
+				<a href="<?php echo $url->getBoardList()?>" class="kboard-default-button-small"><?php echo __('List', 'kboard')?></a>
 				<?php if($board->isReply() && !$content->notice):?><a href="<?php echo $url->set('parent_uid', $content->uid)->set('mod', 'editor')->toString()?>" class="kboard-default-button-small"><?php echo __('Reply', 'kboard')?></a><?php endif?>
 			</div>
 			<?php if($content->isEditor() || $board->permission_write=='all'):?>
 			<div class="right">
-				<a href="<?php echo esc_url($url->getContentEditor($content->uid))?>" class="kboard-default-button-small"><?php echo __('Edit', 'kboard')?></a>
-				<a href="<?php echo esc_url($url->getContentRemove($content->uid))?>" class="kboard-default-button-small" onclick="return confirm('<?php echo __('Are you sure you want to delete?', 'kboard')?>');"><?php echo __('Delete', 'kboard')?></a>
+				<a href="<?php echo $url->getContentEditor($content->uid)?>" class="kboard-default-button-small"><?php echo __('Edit', 'kboard')?></a>
+				<a href="<?php echo $url->getContentRemove($content->uid)?>" class="kboard-default-button-small" onclick="return confirm('<?php echo __('Are you sure you want to delete?', 'kboard')?>');"><?php echo __('Delete', 'kboard')?></a>
 			</div>
 			<?php endif?>
 		</div>
