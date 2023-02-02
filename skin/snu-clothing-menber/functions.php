@@ -214,3 +214,32 @@ if (!function_exists('kboard_snu_kboard_filter')) {
   }
 }
 // 검색 고도화 하기 - 끝
+
+
+// 상세보기를 누르면 조회수를 올린다
+if (!function_exists('kboard_snu_update_view_count_action')) {
+  add_action( 'wp_ajax_kboard_snu_update_view_count_action', 'kboard_snu_update_view_count_action' );
+  add_action( 'wp_ajax_nopriv_kboard_snu_update_view_count_action', 'kboard_snu_update_view_count_action' );
+  function kboard_snu_update_view_count_action() {
+    global $wpdb;
+
+    if (!isset($_POST['uid'])) {
+      wp_send_json_error(array(
+        "code" => 404,
+        "message" => 'no value'
+      ));
+      return;
+    }
+    $uid = intval($_POST['uid']);
+
+    if (empty($uid)) {
+      wp_send_json_error(array(
+        "code" => 403,
+        "message" => 'empty value'
+      ), 401);
+      return;
+    }
+
+    $wpdb->query("UPDATE `{$wpdb->prefix}kboard_board_content` SET `view`=`view`+1 WHERE `uid`='{$uid}'");
+  }
+}

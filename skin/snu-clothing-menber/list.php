@@ -215,6 +215,7 @@ else:
 		</div>
 		<?php endif?>
 	</div>
+
 </div>
 <?php wp_enqueue_script('kboard-snu-clothing-menber-list', "{$skin_path}/list.js", array(), KBOARD_snu_clothing_menber_VERSION, true)?>
 <?php endif?>
@@ -240,10 +241,20 @@ else:
       $container.removeClass('show-modal');
     });
 
+    const ajax_url = $('input[name="ajax_url"]').val();
+
     $buttons.on("click", (e) => {
       const $target = $(e.currentTarget);
       const id = $target.attr("data-modal-id");
       $(`.modal_container[data-modal-id="${id}"]`).addClass('show-modal');
+      if (!ajax_url) return;
+      const data = {
+        action: 'kboard_snu_update_view_count_action',
+        uid: id,
+      };
+      $.post(ajax_url, data, (response) => {
+        if (!response.success) return;
+      });
     });
   });
 })(jQuery);
