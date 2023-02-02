@@ -215,7 +215,7 @@ else:
 		</div>
 		<?php endif?>
 	</div>
-
+  <input type="hidden" name="ajax_url" value="<?php echo admin_url('admin-ajax.php'); ?>" />
 </div>
 <?php wp_enqueue_script('kboard-snu-clothing-menber-list', "{$skin_path}/list.js", array(), KBOARD_snu_clothing_menber_VERSION, true)?>
 <?php endif?>
@@ -252,6 +252,7 @@ else:
         action: 'kboard_snu_update_view_count_action',
         uid: id,
       };
+
       $.post(ajax_url, data, (response) => {
         if (!response.success) return;
       });

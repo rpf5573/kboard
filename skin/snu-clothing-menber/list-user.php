@@ -1,6 +1,7 @@
-<?php while($content = $list->hasNext()):?>
+<?php while($content = $list->hasNext()):
+  $uid = $list->row->uid; ?>
 <tr class="<?php if($content->uid == kboard_uid()):?>kboard-list-selected<?php endif?>">
-	<td class="kboard-list-uid"><?php echo $list->index()?></td>
+	<td class="kboard-list-uid"><?php echo $list->index();?></td>
 	<td class="kboard-list-title">
 			<?php if($content->attach->{'portrait'}[1]):?><div class="portrait"></div><?php else:?><div class="noimg"><img src="<?php echo $skin_path?>/noimg.jpg"></div><?php endif?>  <div class="name_area"><?php echo $content->title?> <span class="member_name">(<?php echo $content->option->{'Name_English'}?>, <?php echo $content->option->{'Name_Chinese'}?>)</span></div>
 	</td>
@@ -15,7 +16,7 @@
 	<td class="kboard-list-email"><?php echo $content->option->{'Email_Out_of_Campus'}?></td>
 	<td class="kboard-list-job"><?php echo $content->option->{'Current_Job'}?></td>
 	<td class="kboard-list-view">
-    <button type="button" class="modal-btn" data-modal-id="<?php echo $list->index(); ?>"><?php echo __('상세보기', 'kboard-cross-link')?></button>
+    <button type="button" class="modal-btn" data-modal-id="<?php echo $uid; ?>"><?php echo __('상세보기', 'kboard-cross-link')?></button>
 	</td>
 	<?php if($content->isEditor() || $board->permission_write=='all'):?>
 	<td class="kboard-list-view">
@@ -32,7 +33,7 @@
 </tr>
 
 
-<div class="modal_container" data-modal-id="<?php echo $list->index(); ?>">
+<div class="modal_container" data-modal-id="<?php echo $uid; ?>">
   <div class="modal_wrap">
     <div class="modal_close"><i class="xi-close-thin"></i></div>
     <div class="modal_detail">
