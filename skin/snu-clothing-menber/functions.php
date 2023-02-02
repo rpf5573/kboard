@@ -262,10 +262,9 @@ if (!function_exists('kboard_snu_get_list_count_by_category')) {
 if (!function_exists('kboard_snu_download_xlsx')) {
   add_action('init', 'kboard_snu_download_xlsx');
   function kboard_snu_download_xlsx() {
-    global $wpdb;
-  
     if (!isset($_GET['kboard_snu_xlsx_download'])) return;
-    if(!current_user_can('manage_kboard')) wp_die(__('You do not have permission.', 'kboard'));
+    if (!current_user_can('manage_kboard')) wp_die(__('You do not have permission.', 'kboard'));
+    if (!wp_verify_nonce( $_GET['kboard_snu_xlsx_download_nonce'], 'kboard_snu_xlsx_download_action' )) wp_die(__('Invalid Access', 'kboard'));
 
     $board_id = isset($_GET['board_id'])?$_GET['board_id']:'';
     $board = new KBoard($board_id);

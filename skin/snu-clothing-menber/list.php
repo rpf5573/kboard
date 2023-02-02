@@ -216,9 +216,15 @@ else:
 		<?php endif?>
 	</div>
   <input type="hidden" name="ajax_url" value="<?php echo admin_url('admin-ajax.php'); ?>" />
+
+  <form method="GET" action="/">
+    <input type="hidden" name="kboard_snu_xlsx_download" value="1" />
+    <input type="hidden" name="board_id" value="<?php echo $board->id; ?>" /> <?php
+    wp_nonce_field( 'kboard_snu_xlsx_download_action', 'kboard_snu_xlsx_download_nonce' ); ?>
+    <button type="submit">Download Excel</button>
+  </form>
 </div>
 
-<a href="/?kboard_snu_xlsx_download=1&board_id=<?php echo $board->id; ?>">My Download Test</a>
 
 <?php wp_enqueue_script('kboard-snu-clothing-menber-list', "{$skin_path}/list.js", array(), KBOARD_snu_clothing_menber_VERSION, true)?>
 <?php endif?>
