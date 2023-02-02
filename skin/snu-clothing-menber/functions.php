@@ -444,7 +444,7 @@ if (!function_exists('kboard_snu_download_xlsx')) {
       $writer = new Xlsx($spreadsheet);
 
       header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      header('Content-Disposition: attachment;filename="array-to-excel.xlsx"');
+      header('Content-Disposition: attachment;filename="users.xlsx"');
       header('Cache-Control: max-age=0');
       $writer->save('php://output');
     }
