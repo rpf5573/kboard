@@ -153,7 +153,7 @@ else:
 				</select>
 
         <select name="kboard_list_rpp" onchange="jQuery('#kboard-sort-form-<?php echo $board->id?>').submit();">
-          <option value="50"<?php if($list->getRpp() === 50):?> selected<?php endif?>>50개</option>
+          <option value="3"<?php if($list->getRpp() === 3):?> selected<?php endif?>>3개</option>
           <option value="100"<?php if($list->getRpp() === 100):?> selected<?php endif?>>100개</option>
           <option value="300"<?php if($list->getRpp() === 300):?> selected<?php endif?>>300개</option>
           <option value="500"<?php if($list->getRpp() === 500):?> selected<?php endif?>>500개</option>
@@ -198,12 +198,14 @@ else:
 			</table>
 		</div>
 		<!-- 리스트 끝 -->
-		
-		<!-- 페이징 시작 -->
-		<div class="kboard-pagination">
-			<button class="kboard-snu-clothing-menber-button-small" onclick="return kboard_snu_clothing_menber_more_view(this, '<?php echo $board->id?>')" title="<?php echo __('View More', 'kboard-snu-clothing-menber')?>"><?php echo __('View More', 'kboard-snu-clothing-menber')?></button>
-		</div>
-		<!-- 페이징 끝 -->
+
+    <!-- 페이징 시작 -->
+    <div class="kboard-pagination">
+      <ul class="kboard-pagination-pages"> <?php 
+        echo kboard_pagination($list->page, $list->total, $list->rpp); ?>
+      </ul>
+    </div>
+    <!-- 페이징 끝 -->
 
 		<?php if($board->isWriter()):?>
 			<div class="writer_button" style="text-align: right;"><a href="<?php echo $url->getContentEditor()?>" class="kboard-snu-clothing-menber-button-small" title="<?php echo __('등록하기', 'kboard-snu-clothing-menber')?>"><?php echo __('등록하기', 'kboard-snu-clothing-menber')?></a></div>
@@ -215,14 +217,16 @@ else:
 		</div>
 		<?php endif?>
 	</div>
-  <input type="hidden" name="ajax_url" value="<?php echo admin_url('admin-ajax.php'); ?>" />
+  <input type="hidden" name="ajax_url" value="<?php echo admin_url('admin-ajax.php'); ?>" /> <?php
 
-  <form method="GET" action="/">
-    <input type="hidden" name="kboard_snu_xlsx_download" value="1" />
-    <input type="hidden" name="board_id" value="<?php echo $board->id; ?>" /> <?php
-    wp_nonce_field( 'kboard_snu_xlsx_download_action', 'kboard_snu_xlsx_download_nonce' ); ?>
-    <button type="submit">Download Excel</button>
-  </form>
+  if (current_user_can('manage_kboard')) { ?>
+    <form method="GET" action="/">
+      <input type="hidden" name="kboard_snu_xlsx_download" value="1" />
+      <input type="hidden" name="board_id" value="<?php echo $board->id; ?>" /> <?php
+      wp_nonce_field( 'kboard_snu_xlsx_download_action', 'kboard_snu_xlsx_download_nonce' ); ?>
+      <button type="submit">Download Excel</button>
+    </form> <?php 
+  } ?>
 </div>
 
 

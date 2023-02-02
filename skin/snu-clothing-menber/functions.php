@@ -422,7 +422,7 @@ if (!function_exists('kboard_snu_download_xlsx')) {
       }
 
       $list = new KBContentList($board_id);
-      $list->rpp(1000);
+      $list->rpp(2000);
       $list->orderASC('uid');
       $list->initFirstList();
 
