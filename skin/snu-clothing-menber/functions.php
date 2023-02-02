@@ -1,6 +1,11 @@
 <?php
 if(!defined('ABSPATH')) exit;
 
+// require_once ABSPATH . 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 define('KBOARD_snu_clothing_menber_VERSION', '1.6');
 
 load_plugin_textdomain('kboard-snu-clothing-menber', false, dirname(plugin_basename(__FILE__)) . '/languages');
@@ -252,4 +257,214 @@ if (!function_exists('kboard_snu_get_list_count_by_category')) {
     $category1 = $_GET['category1'];
     return number_format($board->getCategoryCount(array('category1' => $category1)));
   }
+}
+
+if (!function_exists('kboard_snu_download_xlsx')) {
+  add_action('init', 'kboard_snu_download_xlsx');
+  function kboard_snu_download_xlsx() {
+    if (!isset($_GET['kboard_snu_xlsx_download'])) return;
+
+    @ob_end_clean();
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    $cols = array(
+      'A1' => array(
+        'col_name' => '순번',
+        'option_key' => 'uid',
+      ),
+      'B1' => array(
+        'col_name' => '과정',
+        'option_key' => 'course'
+      ),
+      'C1' => array(
+        'col_name' => '대학(원)',
+        'option_key' => 'university'
+      ),
+      'D1' => array(
+        'col_name' => '학과(부)',
+        'option_key' => 'department'
+      ),
+      'E1' => array(
+        'col_name' => '전공',
+        'option_key' => 'major'
+      ),
+      'F1' => array(
+        'col_name' => '전공구분',
+        'option_key' => 'classification_of_major'
+      ),
+      'G1' => array(
+        'col_name' => '학적구분',
+        'option_key' => 'academic_classification'
+      ),
+      'H1' => array(
+        'col_name' => '학적상태',
+        'option_key' => 'academic_status'
+      ),
+      'I1' => array(
+        'col_name' => '수료일자',
+        'option_key' => 'completion_date'
+      ),
+      'J1' => array(
+        'col_name' => '졸업일자',
+        'option_key' => 'graduation_date'
+      ),
+      'K1' => array(
+        'col_name' => '학번',
+        'option_key' => 'student_id'
+      ),
+      'L1' => array(
+        'col_name' => '한글성명',
+        'option_key' => 'title'
+      ),
+      'M1' => array(
+        'col_name' => '성별',
+        'option_key' => 'gender'
+      ),
+      'N1' => array(
+        'col_name' => '입학년도',
+        'option_key' => 'entrance_date'
+      ),
+      'O1' => array(
+        'col_name' => '영문성명',
+        'option_key' => 'name_english'
+      ),
+      'P1' => array(
+        'col_name' => '한자성명',
+        'option_key' => 'name_chinese'
+      ),
+      'Q1' => array(
+        'col_name' => '생년월일',
+        'option_key' => 'birth_date'
+      ),
+      'R1' => array(
+        'col_name' => '핸드폰번호',
+        'option_key' => 'mobile_no'
+      ),
+      'S1' => array(
+        'col_name' => '주야구분',
+        'option_key' => 'day_night'
+      ),
+      'T1' => array(
+        'col_name' => '지도교수',
+        'option_key' => 'advisor'
+      ),
+      'U1' => array(
+        'col_name' => '입학구분',
+        'option_key' => 'admission_classification'
+      ),
+      'V1' => array(
+        'col_name' => '학년',
+        'option_key' => 'academic_year'
+      ),
+      'W1' => array(
+        'col_name' => '휴학학기수',
+        'option_key' => 'semester_leave_no'
+      ),
+      'X1' => array(
+        'col_name' => '등록학기수',
+        'option_key' => 'semesters_enrolled_no'
+      ),
+      'Y1' => array(
+        'col_name' => '국적',
+        'option_key' => 'nationality'
+      ),
+      'Z1' => array(
+        'col_name' => '출신학교',
+        'option_key' => 'graduation_school'
+      ),
+      'AA1' => array(
+        'col_name' => '유형구분',
+        'option_key' => 'type_classification'
+      ),
+      'AB1' => array(
+        'col_name' => '입학일자',
+        'option_key' => 'entrance_date'
+      ),
+      'AC1' => array(
+        'col_name' => '학적변동',
+        'option_key' => 'academic_change'
+      ),
+      'AD1' => array(
+        'col_name' => '등록구분',
+        'option_key' => 'registration_category'
+      ),
+      'AE1' => array(
+        'col_name' => '이메일(교내)',
+        'option_key' => 'email_on_campus'
+      ),
+      'AF1' => array(
+        'col_name' => '이메일(외부)',
+        'option_key' => 'email_out_of_campus'
+      ),
+      'AG1' => array(
+        'col_name' => '대학원(졸업연도)',
+        'option_key' => 'graduate_school'
+      ),
+      'AH1' => array(
+        'col_name' => '직업',
+        'option_key' => 'current_job'
+      ),
+      'AI1' => array(
+        'col_name' => '비고',
+        'option_key' => 'content'
+      ),
+    );
+
+    $sheet->setCellValue('A1', '순번');
+    $sheet->setCellValue('B1', '과정');
+    $sheet->setCellValue('C1', '대학(원)');
+    $sheet->setCellValue('D1', '학과(부)');
+    $sheet->setCellValue('E1', '전공');
+    $sheet->setCellValue('1', '');
+    $sheet->setCellValue('1', '');
+    $sheet->setCellValue('1', '');
+    $sheet->setCellValue('1', '');
+    $sheet->setCellValue('1', '');
+    $sheet->setCellValue('1', '');
+    $sheet->setCellValue('1', '');
+    $sheet->setCellValue('1', '');
+    $sheet->setCellValue('1', '');
+    $sheet->setCellValue('1', '');
+    $sheet->setCellValue('1', '');
+    $sheet->setCellValue('1', '');
+
+    @ob_end_clean();
+    $writer = new Xlsx($spreadsheet);
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="array-to-excel.xlsx"');
+    header('Cache-Control: max-age=0');
+    $writer->save('php://output');
+
+    exit;
+  }
+}
+
+if (!function_exists('kboard_snu_extract_data_as_excel_action')) {
+  // add_action( 'wp_ajax_kboard_snu_extract_data_as_excel_action', 'kboard_snu_extract_data_as_excel_action' );
+  // add_action( 'wp_ajax_nopriv_kboard_snu_extract_data_as_excel_action', 'kboard_snu_extract_data_as_excel_action' );
+  function kboard_snu_extract_data_as_excel_action(){
+		global $wpdb;
+		if(!current_user_can('manage_kboard')) wp_die(__('You do not have permission.', 'kboard'));
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet(); 
+
+    $sheet->setCellValue('A1', 'ID');
+    $sheet->setCellValue('B1', 'Name');
+    $sheet->setCellValue('C1', 'Name2');
+    $sheet->setCellValue('D1', 'Name3');
+    $sheet->setCellValue('E1', 'Type');
+
+    @ob_end_clean();
+    $writer = new Xlsx($spreadsheet);
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="array-to-excel.xlsx"');
+    header('Cache-Control: max-age=0');
+    $writer->save('php://output');
+
+    exit;
+	}
 }
