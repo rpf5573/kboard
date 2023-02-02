@@ -111,7 +111,7 @@ else:
 			<div class="kboard-search">
 				<form id="kboard-search-form-<?php echo $board->id?>" method="get" action="<?php echo $url->toString()?>">
 		        	<?php echo $url->set('pageid', '1')->set('target', '')->set('keyword', '')->set('mod', 'list')->toInput()?>
-					<input type="text" name="keyword" value="<?php echo kboard_keyword()?>" placeholder="이름, 연락처, 이메일 등을 입력하세요"  required>
+					<input type="text" name="keyword" value="<?php echo kboard_keyword()?>" placeholder="이름, 연락처, 이메일 등을 입력하세요" >
 					<button type="submit" class="kboard-search-button"><i class="xi-search"></i></button>
 				</form>
 			</div>
