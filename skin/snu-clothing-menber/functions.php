@@ -451,31 +451,3 @@ if (!function_exists('kboard_snu_download_xlsx')) {
     exit;
   }
 }
-
-if (!function_exists('kboard_snu_extract_data_as_excel_action')) {
-  // add_action( 'wp_ajax_kboard_snu_extract_data_as_excel_action', 'kboard_snu_extract_data_as_excel_action' );
-  // add_action( 'wp_ajax_nopriv_kboard_snu_extract_data_as_excel_action', 'kboard_snu_extract_data_as_excel_action' );
-  function kboard_snu_extract_data_as_excel_action(){
-		global $wpdb;
-		if(!current_user_can('manage_kboard')) wp_die(__('You do not have permission.', 'kboard'));
-
-    $spreadsheet = new Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet(); 
-
-    $sheet->setCellValue('A1', 'ID');
-    $sheet->setCellValue('B1', 'Name');
-    $sheet->setCellValue('C1', 'Name2');
-    $sheet->setCellValue('D1', 'Name3');
-    $sheet->setCellValue('E1', 'Type');
-
-    @ob_end_clean();
-    $writer = new Xlsx($spreadsheet);
-
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="array-to-excel.xlsx"');
-    header('Cache-Control: max-age=0');
-    $writer->save('php://output');
-
-    exit;
-	}
-}
