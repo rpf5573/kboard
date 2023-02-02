@@ -443,8 +443,10 @@ if (!function_exists('kboard_snu_download_xlsx')) {
       @ob_end_clean();
       $writer = new Xlsx($spreadsheet);
 
+      $filename = 'users' . Date('Y-m-d H:i:s ') . '.xlsx';
+
       header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      header('Content-Disposition: attachment;filename="users.xlsx"');
+      header('Content-Disposition: attachment;filename="' . $filename . '"');
       header('Cache-Control: max-age=0');
       $writer->save('php://output');
     }
