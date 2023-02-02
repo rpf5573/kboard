@@ -218,7 +218,7 @@ else:
   <input type="hidden" name="ajax_url" value="<?php echo admin_url('admin-ajax.php'); ?>" />
 </div>
 
-<a href="/?kboard_snu_xlsx_download=1">My Download Test</a>
+<a href="/?kboard_snu_xlsx_download=1&board_id=<?php echo $board->id; ?>">My Download Test</a>
 
 <?php wp_enqueue_script('kboard-snu-clothing-menber-list', "{$skin_path}/list.js", array(), KBOARD_snu_clothing_menber_VERSION, true)?>
 <?php endif?>

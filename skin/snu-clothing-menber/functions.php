@@ -262,181 +262,193 @@ if (!function_exists('kboard_snu_get_list_count_by_category')) {
 if (!function_exists('kboard_snu_download_xlsx')) {
   add_action('init', 'kboard_snu_download_xlsx');
   function kboard_snu_download_xlsx() {
+    global $wpdb;
+  
     if (!isset($_GET['kboard_snu_xlsx_download'])) return;
+    if(!current_user_can('manage_kboard')) wp_die(__('You do not have permission.', 'kboard'));
 
-    @ob_end_clean();
-    $spreadsheet = new Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet();
+    $board_id = isset($_GET['board_id'])?$_GET['board_id']:'';
+    $board = new KBoard($board_id);
 
-    $cols = array(
-      'A1' => array(
-        'col_name' => '순번',
-        'option_key' => 'uid',
-      ),
-      'B1' => array(
-        'col_name' => '과정',
-        'option_key' => 'course'
-      ),
-      'C1' => array(
-        'col_name' => '대학(원)',
-        'option_key' => 'university'
-      ),
-      'D1' => array(
-        'col_name' => '학과(부)',
-        'option_key' => 'department'
-      ),
-      'E1' => array(
-        'col_name' => '전공',
-        'option_key' => 'major'
-      ),
-      'F1' => array(
-        'col_name' => '전공구분',
-        'option_key' => 'classification_of_major'
-      ),
-      'G1' => array(
-        'col_name' => '학적구분',
-        'option_key' => 'academic_classification'
-      ),
-      'H1' => array(
-        'col_name' => '학적상태',
-        'option_key' => 'academic_status'
-      ),
-      'I1' => array(
-        'col_name' => '수료일자',
-        'option_key' => 'completion_date'
-      ),
-      'J1' => array(
-        'col_name' => '졸업일자',
-        'option_key' => 'graduation_date'
-      ),
-      'K1' => array(
-        'col_name' => '학번',
-        'option_key' => 'student_id'
-      ),
-      'L1' => array(
-        'col_name' => '한글성명',
-        'option_key' => 'title'
-      ),
-      'M1' => array(
-        'col_name' => '성별',
-        'option_key' => 'gender'
-      ),
-      'N1' => array(
-        'col_name' => '입학년도',
-        'option_key' => 'entrance_date'
-      ),
-      'O1' => array(
-        'col_name' => '영문성명',
-        'option_key' => 'name_english'
-      ),
-      'P1' => array(
-        'col_name' => '한자성명',
-        'option_key' => 'name_chinese'
-      ),
-      'Q1' => array(
-        'col_name' => '생년월일',
-        'option_key' => 'birth_date'
-      ),
-      'R1' => array(
-        'col_name' => '핸드폰번호',
-        'option_key' => 'mobile_no'
-      ),
-      'S1' => array(
-        'col_name' => '주야구분',
-        'option_key' => 'day_night'
-      ),
-      'T1' => array(
-        'col_name' => '지도교수',
-        'option_key' => 'advisor'
-      ),
-      'U1' => array(
-        'col_name' => '입학구분',
-        'option_key' => 'admission_classification'
-      ),
-      'V1' => array(
-        'col_name' => '학년',
-        'option_key' => 'academic_year'
-      ),
-      'W1' => array(
-        'col_name' => '휴학학기수',
-        'option_key' => 'semester_leave_no'
-      ),
-      'X1' => array(
-        'col_name' => '등록학기수',
-        'option_key' => 'semesters_enrolled_no'
-      ),
-      'Y1' => array(
-        'col_name' => '국적',
-        'option_key' => 'nationality'
-      ),
-      'Z1' => array(
-        'col_name' => '출신학교',
-        'option_key' => 'graduation_school'
-      ),
-      'AA1' => array(
-        'col_name' => '유형구분',
-        'option_key' => 'type_classification'
-      ),
-      'AB1' => array(
-        'col_name' => '입학일자',
-        'option_key' => 'entrance_date'
-      ),
-      'AC1' => array(
-        'col_name' => '학적변동',
-        'option_key' => 'academic_change'
-      ),
-      'AD1' => array(
-        'col_name' => '등록구분',
-        'option_key' => 'registration_category'
-      ),
-      'AE1' => array(
-        'col_name' => '이메일(교내)',
-        'option_key' => 'email_on_campus'
-      ),
-      'AF1' => array(
-        'col_name' => '이메일(외부)',
-        'option_key' => 'email_out_of_campus'
-      ),
-      'AG1' => array(
-        'col_name' => '대학원(졸업연도)',
-        'option_key' => 'graduate_school'
-      ),
-      'AH1' => array(
-        'col_name' => '직업',
-        'option_key' => 'current_job'
-      ),
-      'AI1' => array(
-        'col_name' => '비고',
-        'option_key' => 'content'
-      ),
-    );
+    if ($board->id) {
+      $spreadsheet = new Spreadsheet();
+      $sheet = $spreadsheet->getActiveSheet();
 
-    $sheet->setCellValue('A1', '순번');
-    $sheet->setCellValue('B1', '과정');
-    $sheet->setCellValue('C1', '대학(원)');
-    $sheet->setCellValue('D1', '학과(부)');
-    $sheet->setCellValue('E1', '전공');
-    $sheet->setCellValue('1', '');
-    $sheet->setCellValue('1', '');
-    $sheet->setCellValue('1', '');
-    $sheet->setCellValue('1', '');
-    $sheet->setCellValue('1', '');
-    $sheet->setCellValue('1', '');
-    $sheet->setCellValue('1', '');
-    $sheet->setCellValue('1', '');
-    $sheet->setCellValue('1', '');
-    $sheet->setCellValue('1', '');
-    $sheet->setCellValue('1', '');
-    $sheet->setCellValue('1', '');
+      $cols = array(
+        'A' => array(
+          'col_name' => '순번',
+          'option_key' => 'uid',
+        ),
+        'B' => array(
+          'col_name' => '과정',
+          'option_key' => 'course'
+        ),
+        'C' => array(
+          'col_name' => '대학(원)',
+          'option_key' => 'university'
+        ),
+        'D' => array(
+          'col_name' => '학과(부)',
+          'option_key' => 'department'
+        ),
+        'E' => array(
+          'col_name' => '전공',
+          'option_key' => 'major'
+        ),
+        'F' => array(
+          'col_name' => '전공구분',
+          'option_key' => 'classification_of_major'
+        ),
+        'G' => array(
+          'col_name' => '학적구분',
+          'option_key' => 'academic_classification'
+        ),
+        'H' => array(
+          'col_name' => '학적상태',
+          'option_key' => 'academic_status'
+        ),
+        'I' => array(
+          'col_name' => '수료일자',
+          'option_key' => 'completion_date'
+        ),
+        'J' => array(
+          'col_name' => '졸업일자',
+          'option_key' => 'graduation_date'
+        ),
+        'K' => array(
+          'col_name' => '학번',
+          'option_key' => 'student_id'
+        ),
+        'L' => array(
+          'col_name' => '한글성명',
+          'option_key' => 'title'
+        ),
+        'M' => array(
+          'col_name' => '성별',
+          'option_key' => 'gender'
+        ),
+        'N' => array(
+          'col_name' => '입학년도',
+          'option_key' => 'entrance_date'
+        ),
+        'O' => array(
+          'col_name' => '영문성명',
+          'option_key' => 'name_english'
+        ),
+        'P' => array(
+          'col_name' => '한자성명',
+          'option_key' => 'name_chinese'
+        ),
+        'Q' => array(
+          'col_name' => '생년월일',
+          'option_key' => 'birth_date'
+        ),
+        'R' => array(
+          'col_name' => '핸드폰번호',
+          'option_key' => 'mobile_no'
+        ),
+        'S' => array(
+          'col_name' => '주야구분',
+          'option_key' => 'day_night'
+        ),
+        'T' => array(
+          'col_name' => '지도교수',
+          'option_key' => 'advisor'
+        ),
+        'U' => array(
+          'col_name' => '입학구분',
+          'option_key' => 'admission_classification'
+        ),
+        'V' => array(
+          'col_name' => '학년',
+          'option_key' => 'academic_year'
+        ),
+        'W' => array(
+          'col_name' => '휴학학기수',
+          'option_key' => 'semester_leave_no'
+        ),
+        'X' => array(
+          'col_name' => '등록학기수',
+          'option_key' => 'semesters_enrolled_no'
+        ),
+        'Y' => array(
+          'col_name' => '국적',
+          'option_key' => 'nationality'
+        ),
+        'Z' => array(
+          'col_name' => '출신학교',
+          'option_key' => 'graduation_school'
+        ),
+        'AA' => array(
+          'col_name' => '유형구분',
+          'option_key' => 'type_classification'
+        ),
+        'AB' => array(
+          'col_name' => '입학일자',
+          'option_key' => 'entrance_date'
+        ),
+        'AC' => array(
+          'col_name' => '학적변동',
+          'option_key' => 'academic_change'
+        ),
+        'AD' => array(
+          'col_name' => '등록구분',
+          'option_key' => 'registration_category'
+        ),
+        'AE' => array(
+          'col_name' => '이메일(교내)',
+          'option_key' => 'email_on_campus'
+        ),
+        'AF' => array(
+          'col_name' => '이메일(외부)',
+          'option_key' => 'email_out_of_campus'
+        ),
+        'AG' => array(
+          'col_name' => '대학원(졸업연도)',
+          'option_key' => 'graduate_school'
+        ),
+        'AH' => array(
+          'col_name' => '직업',
+          'option_key' => 'current_job'
+        ),
+        'AI' => array(
+          'col_name' => '비고',
+          'option_key' => 'content'
+        ),
+      );
 
-    @ob_end_clean();
-    $writer = new Xlsx($spreadsheet);
+      $index = 1;
+      foreach ($cols as $col => $arr) {
+        $sheet->setCellValue("{$col}{$index}", $arr['col_name']);
+      }
 
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="array-to-excel.xlsx"');
-    header('Cache-Control: max-age=0');
-    $writer->save('php://output');
+      $list = new KBContentList($board_id);
+      $list->rpp(1000);
+      $list->orderASC('uid');
+      $list->initFirstList();
 
+      while($list->hasNextList()){
+        while($content = $list->hasNext()){
+          $index += 1;
+          foreach($cols as $col => $arr) {
+            $option_key = $arr['option_key'];
+            $option_value = $content->option->{$option_key};
+            if ($option_key === 'uid') {
+              $option_value = $content->uid;
+            }
+            $sheet->setCellValue("{$col}{$index}", $option_value);
+          }
+        }
+      }
+
+      @ob_end_clean();
+      $writer = new Xlsx($spreadsheet);
+
+      header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      header('Content-Disposition: attachment;filename="array-to-excel.xlsx"');
+      header('Cache-Control: max-age=0');
+      $writer->save('php://output');
+    }
     exit;
   }
 }
