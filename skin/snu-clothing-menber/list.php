@@ -153,11 +153,11 @@ else:
 				</select>
 
         <select name="kboard_list_rpp" onchange="jQuery('#kboard-sort-form-<?php echo $board->id?>').submit();">
-          <option value="2"<?php if($list->getRpp() === 2):?> selected<?php endif?>>2개</option>
-          <option value="3"<?php if($list->getRpp() == 3):?> selected<?php endif?>>3개</option>
-          <option value="4"<?php if($list->getRpp() == 4):?> selected<?php endif?>>4개</option>
-          <option value="5"<?php if($list->getRpp() == 5):?> selected<?php endif?>>5개</option>
-          <option value="6"<?php if($list->getRpp() == 6):?> selected<?php endif?>>6개</option>
+          <option value="50"<?php if($list->getRpp() === 50):?> selected<?php endif?>>50개</option>
+          <option value="100"<?php if($list->getRpp() === 100):?> selected<?php endif?>>100개</option>
+          <option value="300"<?php if($list->getRpp() === 300):?> selected<?php endif?>>300개</option>
+          <option value="500"<?php if($list->getRpp() === 500):?> selected<?php endif?>>500개</option>
+          <option value="1000"<?php if($list->getRpp() === 1000):?> selected<?php endif?>>1000개</option>
 				</select>
 			</form>
 		</div>
