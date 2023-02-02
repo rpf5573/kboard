@@ -243,3 +243,13 @@ if (!function_exists('kboard_snu_update_view_count_action')) {
     $wpdb->query("UPDATE `{$wpdb->prefix}kboard_board_content` SET `view`=`view`+1 WHERE `uid`='{$uid}'");
   }
 }
+
+if (!function_exists('kboard_snu_get_list_count_by_category')) {
+  function kboard_snu_get_list_count_by_category($board) {
+    if (!isset($_GET['category1'])) return number_format($board->getListTotal());
+    if (empty($_GET['category1'])) return number_format($board->getListTotal());
+
+    $category1 = $_GET['category1'];
+    return number_format($board->getCategoryCount(array('category1' => $category1)));
+  }
+}

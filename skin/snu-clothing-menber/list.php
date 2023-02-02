@@ -138,7 +138,7 @@ else:
 	<div class="kboard-count-sort">
 		<?php if(!$board->isPrivate()):?>
 			<div class="kboard-total-count">
-				<?php echo __('Total', 'kboard')?> <?php echo number_format($board->getListTotal())?>
+				<?php echo __('Total', 'kboard')?> <?php echo kboard_snu_get_list_count_by_category($board);?>
 			</div>
 		<?php endif?>
 		
