@@ -137,8 +137,12 @@ else:
 	<!-- 리스트 정렬 시작 -->
 	<div class="kboard-count-sort">
 		<?php if(!$board->isPrivate()):?>
-			<div class="kboard-total-count">
-				<?php echo __('Total', 'kboard')?> <?php echo kboard_snu_get_list_count_by_category($board);?>
+			<div class="kboard-total-count"> <?php
+        if (isset($_GET['category1']) && !empty($_GET['category1'])) {
+          echo '전체 ' . number_format($board->getListTotal()) . '명중 ' . $_GET['category1'] . '학번 <b>' . kboard_snu_get_list_count_by_category($board) . '</b>명';
+        } else {
+          echo '전체 ' . number_format($board->getListTotal()) . '명';
+        } ?>
 			</div>
 		<?php endif?>
 		
@@ -169,7 +173,7 @@ else:
 			<table>
 				<thead>
 					<tr>
-						<td class="kboard-list-uid"><?php echo __('Number', 'kboard')?></td>
+						<td class="kboard-list-uid"><?php echo __('번호', 'kboard')?></td>
 						<td class="kboard-list-title"><div class="left-line"><?php echo __('이름', 'kboard')?></div></td>						
 						<?php if($board->use_category && $board->initCategory1()):?>
 						<td class="kboard-list-category1">
@@ -200,10 +204,12 @@ else:
 		<!-- 리스트 끝 -->
 
     <!-- 페이징 시작 -->
-		<div class="kboard-pagination">
-			<button class="kboard-snu-clothing-menber-button-small" title="<?php echo __('View More', 'kboard-snu-clothing-menber')?>"><?php echo __('View More', 'kboard-snu-clothing-menber')?></button>
-		</div>
-		<!-- 페이징 끝 -->
+    <div class="kboard-pagination">
+      <ul class="kboard-pagination-pages">
+        <?php echo kboard_pagination($list->page, $list->total, $list->rpp)?>
+      </ul>
+    </div>
+    <!-- 페이징 끝 -->
 
 		<?php if($board->isWriter()):?>
 			<div class="writer_button" style="text-align: right;"><a href="<?php echo $url->getContentEditor()?>" class="kboard-snu-clothing-menber-button-small" title="<?php echo __('등록하기', 'kboard-snu-clothing-menber')?>"><?php echo __('등록하기', 'kboard-snu-clothing-menber')?></a></div>
@@ -276,11 +282,7 @@ else:
     const $button = $('.kboard-snu-clothing-menber-button-small');
     const ajax_url = $('input[name="ajax_url"]').val();
 
-    console.log('button', $button);
-    console.log('ajax_url', ajax_url);
-
     $button.on("click", () => {
-      alert("CLICK !");
       $.post(ajax_url, {
         action: 'kboard_snu_clothing_menber_more_view_action',
         board_id: 1,

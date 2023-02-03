@@ -28,7 +28,6 @@ if (!function_exists('kboard_snu_clothing_menber_more_view_action')) {
 	function kboard_snu_clothing_menber_more_view_action() {
     $board_id = $_POST['board_id'];
 		$a = kboard_builder(array('id'=>$board_id));
-    ray('a', $a);
     exit;
 	}
 }
@@ -169,14 +168,28 @@ if (!function_exists('kboard_snu_kboard_list_search_option')) {
   }
 }
 
+// select문을 수정한다
+if (!function_exists('kboard_snu_change_select_count')) {
+  add_filter('kboard_list_select_count', 'kboard_snu_change_select_count', 1, 3);
+  function kboard_snu_change_select_count($default, $board_id, $obj) {
+    global $wpdb;
+    return "COUNT(DISTINCT `{$wpdb->prefix}kboard_board_content`.`uid`)";
+  }
+}
+
 // 커스텀 필드를 바탕으로 생성된 수많은 INNER_JOIN을 하나로 바꿔준다
 if (!function_exists('kboard_snu_reduce_inner_join')) {
   add_filter('kboard_list_from', 'kboard_snu_reduce_inner_join', 1, 3);
   function kboard_snu_reduce_inner_join($from_str, $board_id, $obj){
+    global $wpdb;
     if (!isset($_REQUEST['keyword'])) return $from_str;
     if (empty($_REQUEST['keyword'])) return $from_str;
+
+    $new_from_str = "`{$wpdb->prefix}kboard_board_content` INNER JOIN `{$wpdb->prefix}kboard_board_option` ON `{$wpdb->prefix}kboard_board_content`.`uid`=`{$wpdb->prefix}kboard_board_option`.`content_uid`";
+
+    return $new_from_str;
   
-    return '`snuclothingmenber_kboard_board_content` INNER JOIN `snuclothingmenber_kboard_board_option` ON `snuclothingmenber_kboard_board_content`.`uid`=`snuclothingmenber_kboard_board_option`.`content_uid`';
+    // return '`snuclothingmenber_kboard_board_content` INNER JOIN `snuclothingmenber_kboard_board_option` ON `snuclothingmenber_kboard_board_content`.`uid`=`snuclothingmenber_kboard_board_option`.`content_uid`';
   }
 }
 
@@ -208,6 +221,8 @@ if (!function_exists('kboard_snu_kboard_filter')) {
         $replace = "{$wpdb->prefix}kboard_board_option";
         $new_where = str_replace($table, $replace, $new_where);
     }
+
+    $new_where = $new_where . " GROUP BY `{$wpdb->prefix}kboard_board_content`.`uid`";
 
     return $new_where;
   }
