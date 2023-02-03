@@ -1,5 +1,6 @@
 <?php while($content = $list->hasNext()):
-  $uid = $list->row->uid; ?>
+  $uid = $list->row->uid;
+  $index = $list->index(); ?>
 <tr class="<?php if($content->uid == kboard_uid()):?>kboard-list-selected<?php endif?>">
 	<td class="kboard-list-uid"><?php echo $list->index();?></td>
 	<td class="kboard-list-title">

@@ -168,14 +168,40 @@ if (!function_exists('kboard_snu_kboard_list_search_option')) {
   }
 }
 
-// select문을 수정한다
+// select_count문을 수정한다
 if (!function_exists('kboard_snu_change_select_count')) {
   add_filter('kboard_list_select_count', 'kboard_snu_change_select_count', 1, 3);
   function kboard_snu_change_select_count($default, $board_id, $obj) {
     global $wpdb;
+    if (!isset($_REQUEST['keyword'])) return $default;
+    if (empty($_REQUEST['keyword'])) return $default;
+
+    // return "`{$wpdb->prefix}kboard_board_content`.`uid`, SUM(1) as count_rows";
+    // return " count(*) RecordsPerGroup, COUNT(*) OVER () AS TotalRecords ";
     return "COUNT(DISTINCT `{$wpdb->prefix}kboard_board_content`.`uid`)";
   }
 }
+
+// if (!function_exists('kboard_snu_list_total_count')) {
+//   add_filter('kboard_content_list_total_count', 'kboard_snu_list_total_count', 1, 3);
+//   function kboard_snu_list_total_count($total, $board, $this) {
+
+//   }
+// }
+
+// select문을 수정한다
+// if (!function_exists('kboard_snu_change_select')) {
+//   add_filter('kboard_list_select', 'kboard_snu_change_select', 1, 3);
+//   function kboard_snu_change_select($default, $board_id, $obj) {
+//     global $wpdb;
+
+//     if (!isset($_REQUEST['keyword'])) return $default;
+//     if (empty($_REQUEST['keyword'])) return $default;
+
+//     return 'DISTINCT `snuclothingmenber_kboard_board_content`.`uid`';
+//     return "COUNT(DISTINCT `{$wpdb->prefix}kboard_board_content`.`uid`)";
+//   }
+// }
 
 // 커스텀 필드를 바탕으로 생성된 수많은 INNER_JOIN을 하나로 바꿔준다
 if (!function_exists('kboard_snu_reduce_inner_join')) {
@@ -186,10 +212,7 @@ if (!function_exists('kboard_snu_reduce_inner_join')) {
     if (empty($_REQUEST['keyword'])) return $from_str;
 
     $new_from_str = "`{$wpdb->prefix}kboard_board_content` INNER JOIN `{$wpdb->prefix}kboard_board_option` ON `{$wpdb->prefix}kboard_board_content`.`uid`=`{$wpdb->prefix}kboard_board_option`.`content_uid`";
-
     return $new_from_str;
-  
-    // return '`snuclothingmenber_kboard_board_content` INNER JOIN `snuclothingmenber_kboard_board_option` ON `snuclothingmenber_kboard_board_content`.`uid`=`snuclothingmenber_kboard_board_option`.`content_uid`';
   }
 }
 

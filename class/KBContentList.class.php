@@ -705,6 +705,7 @@ class KBContentList {
 		// kboard_list_select_count, kboard_list_select, kboard_list_from, kboard_list_where, kboard_list_orderby 워드프레스 필터 실행
 		$select_count = apply_filters('kboard_list_select_count', 'COUNT(*)', $this->board_id, $this);
 		$select = apply_filters('kboard_list_select', $default_select, $this->board_id, $this);
+
 		$from = apply_filters('kboard_list_from', implode(' ', $this->from), $this->board_id, $this);
 		$where = apply_filters('kboard_list_where', implode(' AND ', $this->where), $this->board_id, $this);
 		$orderby = apply_filters('kboard_list_orderby', "{$this->sort} {$this->order}", $this->board_id, $this);
@@ -733,11 +734,11 @@ class KBContentList {
 				}
 			}
 			
-			if(!isset($select_uid)){
+			if ( !isset($select_uid) ) {
 				$this->total = 0;
 				$this->resource = array();
 			}
-			else{
+			else {
 				$this->total = $wpdb->get_var("SELECT {$select_count} FROM {$from} WHERE {$where}");
 				$this->resource = $wpdb->get_results("SELECT * FROM `{$wpdb->prefix}kboard_board_content` WHERE `{$wpdb->prefix}kboard_board_content`.`uid` IN(".implode(',', $select_uid).") ORDER BY FIELD(`{$wpdb->prefix}kboard_board_content`.`uid`,".implode(',', $select_uid).")");
 			}

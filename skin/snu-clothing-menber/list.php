@@ -187,17 +187,14 @@ else:
 						<?php if($board->isWriter()):?><td class="kboard-list-view"><div class="left-line"><?php echo __('관리', 'kboard')?></div></td><?php endif?>
 					</tr>
 				</thead>
-				<tbody>
-
-					<?php
-            // 리스트 레이아웃을 불러온다.
-            if(is_admin()){
-              include_once 'list-admin.php';
-            }
-            else{
-              include_once 'list-user.php';
-            }
-					?>
+				<tbody> <?php
+          // 리스트 레이아웃을 불러온다.
+          if(is_admin()){
+            include_once 'list-admin.php';
+          }
+          else{
+            include_once 'list-user.php';
+          } ?>
 				</tbody>
 			</table>
 		</div>
