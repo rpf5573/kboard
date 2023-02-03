@@ -8,8 +8,8 @@
 class KBContentList {
 	
 	private $kboard_list_sort;
-	public $from;
-	public $where;
+	private $from;
+	private $where;
 	private $multiple_option_keys;
 	private $next_list_page = 1;
 	

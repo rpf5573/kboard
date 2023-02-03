@@ -183,19 +183,74 @@ if (!function_exists('kboard_snu_change_select_count')) {
 }
 
 if (!function_exists('kboard_snu_change_total_count')) {
-  add_filter('kboard_content_list_total_count', 'kboard_snu_change_total_count', 1, 3);
+  // add_filter('kboard_content_list_total_count', 'kboard_snu_change_total_count', 1, 3);
   function kboard_snu_change_total_count($total, $board, $obj) {
     global $wpdb;
     if (!isset($_REQUEST['keyword'])) return $total;
     if (empty($_REQUEST['keyword'])) return $total;
-    
-    // remove_filter('kboard_content_list_total_count', 'kboard_snu_change_total_count');
 
     $keyword = $_REQUEST['keyword'];
-    $board_id = $board->id;
+    $keyword = "%{$keyword}%";
+    
+		$from = array();
+		$where = array();
 
-    $from = apply_filters('kboard_list_from', implode(' ', $obj->from), $board_id, $obj);
-		$where = apply_filters('kboard_list_where', implode(' AND ', $obj->where), $obj->board_id, $obj);
+    $board_id = $board->id;
+    $compare = 'LIKE';
+
+    $where[] = "`{$wpdb->prefix}kboard_board_content`.`board_id`='$board_id'";
+    $where[] = "(`{$wpdb->prefix}kboard_board_content`.`title` {$compare} '{$keyword}' OR `{$wpdb->prefix}kboard_board_content`.`content` {$compare} '{$keyword}')";
+		
+		$from[] = "`{$wpdb->prefix}kboard_board_content`";
+    $from[] = "LEFT JOIN `{$wpdb->prefix}kboard_board_option` ON `{$wpdb->prefix}kboard_board_content`.`uid`=`{$wpdb->prefix}kboard_board_option`.`content_uid`";
+		
+		// 입력 필드 검색 옵션 쿼리를 생성한다.
+		$search_option = apply_filters('kboard_list_search_option', $obj->search_option, $board_id, $obj);
+		if($search_option){
+			$multiple_option_query = $obj->multipleOptionQuery($search_option);
+			if($multiple_option_query){
+				$where[] = $multiple_option_query;
+				
+				foreach($obj->multiple_option_keys as $option_name){
+					$option_key = array_search($option_name, $obj->multiple_option_keys);
+					$from[] = "INNER JOIN `{$wpdb->prefix}kboard_board_option` AS `option_{$option_key}` ON `{$wpdb->prefix}kboard_board_content`.`uid`=`option_{$option_key}`.`content_uid`";
+				}
+			}
+		}
+		
+		// 카테고리1 검색
+    if (isset($_REQUEST['category1']) && empty($_REQUEST['category1'])) {
+      $category1 = $_REQUEST['category1'];
+		  $category = explode(',', $category1); // 여러 카테고리의 경우 콤마로 구분한다.
+      if(count($category) > 1){
+        foreach($category as $index=>$item){
+          $category[$index] = sprintf("'%s'", esc_sql($item));
+        }
+        $category1 = implode(',', $category);
+        $where[] = "`{$wpdb->prefix}kboard_board_content`.`category1` IN ({$category1})";
+      }
+      else {
+        $category1 = esc_sql($category1);
+        $where[] = "`{$wpdb->prefix}kboard_board_content`.`category1`='{$category1}'";
+      }
+    }
+		
+		// 공지사항이 아닌 게시글만 불러온다.
+		$where[] = "`{$wpdb->prefix}kboard_board_content`.`notice`=''";
+		
+		// 휴지통에 없는 게시글만 불러온다.
+		$get_list_status_query = kboard_get_list_status_query($board_id, "{$wpdb->prefix}kboard_board_content");
+		if($get_list_status_query){
+			$where[] = $get_list_status_query;
+		}
+		
+		$from = apply_filters('kboard_list_from', implode(' ', $from), $board_id, $obj);
+		$where = apply_filters('kboard_list_where', implode(' AND ', $where), $board_id, $obj);
+
+    ray('from', $from);
+		ray('where', $where);
+
+		$wpdb->flush();
 
     $results = $wpdb->get_results("SELECT COUNT(*) FROM {$from} WHERE {$where}");
 
