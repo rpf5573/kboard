@@ -192,29 +192,44 @@ if (!function_exists('kboard_snu_kboard_filter')) {
     if (!isset($_REQUEST['keyword'])) return $query_str_where;
     if (empty($_REQUEST['keyword'])) return $query_str_where;
 
-    $first_option_pos = strpos($query_str_where, 'option_key');
-    if (!$first_option_pos) return $query_str_where;
+    $keyword = $_REQUEST['keyword'];
+    $prefix = $wpdb->prefix;
 
-    // AND -> OR
-    $sub_where = substr($query_str_where, 0, $first_option_pos);
-    $last_and_pos = strrpos($sub_where, ' AND ');
-    $where_before_option = substr($query_str_where, 0, $last_and_pos);
-    $where_after_option = substr($query_str_where, $last_and_pos + strlen(' AND '));
-    $new_where = $where_before_option . ' OR ' . $where_after_option;
+    $query = "`snuclothingmenber_kboard_board_content`.`board_id`='{$board_id}'";
 
-    // custom INNER_JOIN 삭제, 공식 INNER_JOIN만 사용한다
-    $custom_fields = kboard_snu_get_custom_fields();
-    foreach($custom_fields as $field) {
-        $table = 'option_' . $field;
-        $replace = "{$wpdb->prefix}kboard_board_option";
-        $new_where = str_replace($table, $replace, $new_where);
+    // 카테고리도 반영해주자
+    if (isset($_REQUEST['category1']) && !empty($_REQUEST['category1'])) {
+      $category1 = $_REQUEST['category1'];
+      $category1 = esc_sql($category1);
+			$query = $query . " AND `{$prefix}kboard_board_content`.`category1`='{$category1}'";
     }
 
-    $new_where = $new_where . " GROUP BY `{$wpdb->prefix}kboard_board_content`.`uid`";
+    $query = $query . "
+      AND (
+        (
+          `{$prefix}kboard_board_content`.`title` LIKE '%{$keyword}%' 
+          OR `{$prefix}kboard_board_content`.`content` LIKE '%{$keyword}%'
+        )
+    ";
 
-    ray('new_where', $new_where);
+    $custom_fields = kboard_snu_get_custom_fields();
+    $sub_where = [];
+    foreach($custom_fields as $field) {
+      $q = "`{$prefix}kboard_board_option`.`option_key`='{$field}' AND `{$prefix}kboard_board_option`.`option_value` LIKE '%{$keyword}%'";
+      $sub_where[] = ' OR (' . $q . ')';
+    }
 
-    return $new_where;
+    $query = $query . implode('', $sub_where) . ')'; // 여기서 AND 끝내고
+
+    $query = $query . "
+      AND `{$prefix}kboard_board_content`.`notice`=''
+      AND (`{$prefix}kboard_board_content`.`status` IS NULL
+      OR `{$prefix}kboard_board_content`.`status`=''
+      OR `{$prefix}kboard_board_content`.`status`='pending_approval')
+      GROUP BY `{$prefix}kboard_board_content`.`uid`
+    ";
+
+    return $query;
   }
 }
 
