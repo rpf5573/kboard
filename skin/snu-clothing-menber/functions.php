@@ -22,20 +22,14 @@ if(!function_exists('kboard_snu_clothing_menber_scripts')){
 	}
 }
 
-if(!function_exists('kboard_snu_clothing_menber_more_view')){
-	add_action('init', 'kboard_snu_clothing_menber_more_view');
-	function kboard_snu_clothing_menber_more_view(){
-		$action = isset($_GET['action'])?$_GET['action']:'';
-		$board_id = isset($_GET['board_id'])?intval($_GET['board_id']):'';
-		
-		if(!$board_id){
-			$board_id = isset($_GET['kboard_id'])?intval($_GET['kboard_id']):'';
-		}
-	
-		if($action == 'kboard_snu_clothing_menber_more_view' && $board_id){
-			echo kboard_builder(array('id'=>$board_id));
-			exit;
-		}
+if (!function_exists('kboard_snu_clothing_menber_more_view_action')) {
+	add_action( 'wp_ajax_kboard_snu_clothing_menber_more_view_action', 'kboard_snu_clothing_menber_more_view_action' );
+  add_action( 'wp_ajax_nopriv_kboard_snu_clothing_menber_more_view_action', 'kboard_snu_clothing_menber_more_view_action' );
+	function kboard_snu_clothing_menber_more_view_action() {
+    $board_id = $_POST['board_id'];
+		$a = kboard_builder(array('id'=>$board_id));
+    ray('a', $a);
+    exit;
 	}
 }
 

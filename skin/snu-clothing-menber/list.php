@@ -200,12 +200,10 @@ else:
 		<!-- 리스트 끝 -->
 
     <!-- 페이징 시작 -->
-    <div class="kboard-pagination">
-      <ul class="kboard-pagination-pages"> <?php 
-        echo kboard_pagination($list->page, $list->total, $list->rpp); ?>
-      </ul>
-    </div>
-    <!-- 페이징 끝 -->
+		<div class="kboard-pagination">
+			<button class="kboard-snu-clothing-menber-button-small" title="<?php echo __('View More', 'kboard-snu-clothing-menber')?>"><?php echo __('View More', 'kboard-snu-clothing-menber')?></button>
+		</div>
+		<!-- 페이징 끝 -->
 
 		<?php if($board->isWriter()):?>
 			<div class="writer_button" style="text-align: right;"><a href="<?php echo $url->getContentEditor()?>" class="kboard-snu-clothing-menber-button-small" title="<?php echo __('등록하기', 'kboard-snu-clothing-menber')?>"><?php echo __('등록하기', 'kboard-snu-clothing-menber')?></a></div>
@@ -268,6 +266,26 @@ else:
 
       $.post(ajax_url, data, (response) => {
         if (!response.success) return;
+      });
+    });
+  });
+})(jQuery);
+
+(($) => {
+  document.addEventListener("DOMContentLoaded", () => {
+    const $button = $('.kboard-snu-clothing-menber-button-small');
+    const ajax_url = $('input[name="ajax_url"]').val();
+
+    console.log('button', $button);
+    console.log('ajax_url', ajax_url);
+
+    $button.on("click", () => {
+      alert("CLICK !");
+      $.post(ajax_url, {
+        action: 'kboard_snu_clothing_menber_more_view_action',
+        board_id: 1,
+      }, (res) => {
+        console.log('res', res);
       });
     });
   });
