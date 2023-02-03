@@ -170,7 +170,7 @@ if (!function_exists('kboard_snu_kboard_list_search_option')) {
 
 // select_count문을 수정한다
 if (!function_exists('kboard_snu_change_select_count')) {
-  add_filter('kboard_list_select_count', 'kboard_snu_change_select_count', 1, 3);
+  // add_filter('kboard_list_select_count', 'kboard_snu_change_select_count', 1, 3);
   function kboard_snu_change_select_count($default, $board_id, $obj) {
     global $wpdb;
     if (!isset($_REQUEST['keyword'])) return $default;
@@ -179,6 +179,27 @@ if (!function_exists('kboard_snu_change_select_count')) {
     // return "`{$wpdb->prefix}kboard_board_content`.`uid`, SUM(1) as count_rows";
     // return " count(*) RecordsPerGroup, COUNT(*) OVER () AS TotalRecords ";
     return "COUNT(DISTINCT `{$wpdb->prefix}kboard_board_content`.`uid`)";
+  }
+}
+
+if (!function_exists('kboard_snu_change_total_count')) {
+  add_filter('kboard_content_list_total_count', 'kboard_snu_change_total_count', 1, 3);
+  function kboard_snu_change_total_count($total, $board, $obj) {
+    global $wpdb;
+    if (!isset($_REQUEST['keyword'])) return $total;
+    if (empty($_REQUEST['keyword'])) return $total;
+    
+    // remove_filter('kboard_content_list_total_count', 'kboard_snu_change_total_count');
+
+    $keyword = $_REQUEST['keyword'];
+    $board_id = $board->id;
+
+    $from = apply_filters('kboard_list_from', implode(' ', $obj->from), $board_id, $obj);
+		$where = apply_filters('kboard_list_where', implode(' AND ', $obj->where), $obj->board_id, $obj);
+
+    $results = $wpdb->get_results("SELECT COUNT(*) FROM {$from} WHERE {$where}");
+
+    return count($results);
   }
 }
 
