@@ -84,6 +84,7 @@
 </style>
 
 <?php
+
 $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : '';
 if($action == 'kboard_snu_clothing_menber_more_view'):
 	// 리스트 레이아웃을 불러온다.
@@ -157,11 +158,11 @@ else:
 				</select>
 
         <select name="kboard_list_rpp" onchange="jQuery('#kboard-sort-form-<?php echo $board->id?>').submit();">
-          <option value="3"<?php if($list->getRpp() === 3):?> selected<?php endif?>>3개</option>
-          <option value="100"<?php if($list->getRpp() === 100):?> selected<?php endif?>>100개</option>
-          <option value="300"<?php if($list->getRpp() === 300):?> selected<?php endif?>>300개</option>
-          <option value="500"<?php if($list->getRpp() === 500):?> selected<?php endif?>>500개</option>
-          <option value="1000"<?php if($list->getRpp() === 1000):?> selected<?php endif?>>1000개</option>
+          <option value="50"<?php if($list->rpp === 50):?> selected<?php endif?>>50개</option>
+          <option value="100"<?php if($list->rpp === 100):?> selected<?php endif?>>100개</option>
+          <option value="300"<?php if($list->rpp === 300):?> selected<?php endif?>>300개</option>
+          <option value="500"<?php if($list->rpp === 500):?> selected<?php endif?>>500개</option>
+          <option value="1000"<?php if($list->rpp === 1000):?> selected<?php endif?>>1000개</option>
 				</select>
 			</form>
 		</div>
