@@ -181,7 +181,7 @@ if (!$is_loaded) {
 
         // 더보기 버튼 핸들러
         (($) => {
-          const $button = $(".kboard-snu-clothing-menber-button-small");
+          const $button = $(".kboard-pagination .kboard-snu-clothing-menber-button-small");
           const ajax_url = $('input[name="ajax_url"]').val();
           const page_url = $("input[name=kboard_snu_list_latest_board_url]").val();
           const keyword = $("input[name=keyword]").val();

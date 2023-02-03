@@ -44,7 +44,7 @@ select { -webkit-appearance:none!important; -moz-appearance:none!important; appe
 	<form class="kboard-form" method="post" action="<?php echo $url->getContentEditorExecute()?>" enctype="multipart/form-data" onsubmit="return kboard_editor_execute(this);">
 		<?php $skin->editorHeader($content, $board)?>
 		
-<?php foreach($board->fields()->getSkinFields() as $key=>$field):?>
+<?php foreach($board->fields()->getSkinFields() as $key=>$field): ?>
 			<?php echo $board->fields()->getTemplate($field, $content, $boardBuilder)?>
 		<?php endforeach?>
 		
