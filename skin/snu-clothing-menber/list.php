@@ -1,3 +1,15 @@
+<?php
+$action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : '';
+if ($action == 'kboard_snu_more_view_action'):
+	// 리스트 레이아웃을 불러온다.
+	if (isset($_GET['current_page']) && $_GET['current_page'] == 'admin') {
+		include 'list-admin.php';
+	}
+	else{
+		include 'list-user.php';
+	}
+else: ?>
+
 <style>
 .kboard-snu-clothing-menber-list .kboard-list tbody td.kboard-list-title .portrait { width: 35px; height: 35px; float: left;  background-image: url(<?php echo $content->attach->{'portrait'}[0]; ?>) !important; background-position: center top !important; background-repeat: no-repeat !important; background-size: cover !important; background-blend-mode: multiply; margin-right: 10px;}
 .kboard-snu-clothing-menber-list .kboard-list tbody td.kboard-list-title .noimg { width: 35px; height: 35px; float: left; margin-right: 10px;}
@@ -83,26 +95,11 @@
 .document_info2_area .info_3line span.value { display: inline-block; font-size: 1rem; font-weight: 700; width:100%; color:#222; margin-bottom: 0px; }
 </style>
 
-<?php
-
-$action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : '';
-if($action == 'kboard_snu_clothing_menber_more_view'):
-	// 리스트 레이아웃을 불러온다.
-	if(isset($_GET['current_page']) && $_GET['current_page'] == 'admin'){
-		include 'list-admin.php';
-	}
-	else{
-		include 'list-user.php';
-	}
-else:
-?>
-
 <div id="kboard-snu-clothing-menber-list">
-	<input type="hidden" name="kboard_snu_clothing_menber_page" value="<?php echo $list->page?>">
-	<input type="hidden" name="kboard_snu_clothing_menber_category1" value="<?php echo $list->category1?>">
-	<input type="hidden" name="kboard_snu_clothing_menber_category2" value="<?php echo $list->category2?>">
-	<input type="hidden" name="kboard_snu_clothing_menber_current_page" value="<?php echo is_admin() ? 'admin' : ''?>">
-	<input type="hidden" name="kboard_snu_clothing_menber_latest_board_url" value="<?php echo $_SERVER['REQUEST_URI']?>">
+  <input type="hidden" name="kboard_snu_list_latest_board_url" value="<?php echo $_SERVER['REQUEST_URI']?>">
+	<input type="hidden" name="kboard_snu_list_page" value="<?php echo $list->page?>">
+	<input type="hidden" name="kboard_snu_list_category1" value="<?php echo $list->category1?>">
+	<input type="hidden" name="kboard_snu_list_current_page" value="<?php echo is_admin() ? 'admin' : ''?>">
 	
 	<div class="kboard-snu-clothing-menber-list">
 		<!-- 게시판 정보 시작 -->
@@ -158,7 +155,7 @@ else:
 				</select>
 
         <select name="kboard_list_rpp" onchange="jQuery('#kboard-sort-form-<?php echo $board->id?>').submit();">
-          <option value="50"<?php if($list->rpp === 50):?> selected<?php endif?>>50개</option>
+          <option value="4"<?php if($list->rpp === 4):?> selected<?php endif?>>4개</option>
           <option value="100"<?php if($list->rpp === 100):?> selected<?php endif?>>100개</option>
           <option value="300"<?php if($list->rpp === 300):?> selected<?php endif?>>300개</option>
           <option value="500"<?php if($list->rpp === 500):?> selected<?php endif?>>500개</option>
@@ -202,12 +199,10 @@ else:
 		<!-- 리스트 끝 -->
 
     <!-- 페이징 시작 -->
-    <div class="kboard-pagination">
-      <ul class="kboard-pagination-pages">
-        <?php echo kboard_pagination($list->page, $list->total, $list->rpp)?>
-      </ul>
-    </div>
-    <!-- 페이징 끝 -->
+		<div class="kboard-pagination">
+			<button class="kboard-snu-clothing-menber-button-small" title="<?php echo __('View More', 'kboard-cross-link')?>"><?php echo __('View More', 'kboard-snu-clothing-menber')?></button>
+		</div>
+		<!-- 페이징 끝 -->
 
 		<?php if($board->isWriter()):?>
 			<div class="writer_button" style="text-align: right;"><a href="<?php echo $url->getContentEditor()?>" class="kboard-snu-clothing-menber-button-small" title="<?php echo __('등록하기', 'kboard-snu-clothing-menber')?>"><?php echo __('등록하기', 'kboard-snu-clothing-menber')?></a></div>
@@ -219,75 +214,17 @@ else:
 		</div>
 		<?php endif?>
 	</div>
-  <input type="hidden" name="ajax_url" value="<?php echo admin_url('admin-ajax.php'); ?>" /> <?php
+  <input type="hidden" name="ajax_url" value="<?php echo admin_url('admin-ajax.php'); ?>" />
+  <input type="hidden" name="board_id" value="<?php echo $board->id; ?>" /> <?php
 
   if (current_user_can('manage_kboard')) { ?>
     <form method="GET" action="/">
-      <input type="hidden" name="kboard_snu_xlsx_download" value="1" />
-      <input type="hidden" name="board_id" value="<?php echo $board->id; ?>" /> <?php
+      <input type="hidden" name="kboard_snu_xlsx_download" value="1" /> <?php
       wp_nonce_field( 'kboard_snu_xlsx_download_action', 'kboard_snu_xlsx_download_nonce' ); ?>
       <button type="submit">Download Excel</button>
     </form> <?php 
   } ?>
 </div>
 
-
 <?php wp_enqueue_script('kboard-snu-clothing-menber-list', "{$skin_path}/list.js", array(), KBOARD_snu_clothing_menber_VERSION, true)?>
 <?php endif?>
-<script>
-'use strict';
-(($) => {
-  document.addEventListener("DOMContentLoaded", () => {
-    const $buttons = $('.kboard-list-view > .modal-btn');
-    if ($buttons.length === 0) return;
-
-    $(".modal_container").on("click", (e) => {
-      const $target = $(e.currentTarget);
-      const wrap = e.currentTarget.querySelector('.modal_wrap');
-      const originalEvent = e.originalEvent;
-      const paths = originalEvent.composedPath();
-      !paths.includes(wrap) && $target.removeClass("show-modal");
-    });
-
-    $('.modal_close').on("click", (e) => {
-      const $target = $(e.currentTarget);
-      console.log($target);
-      const $container = $($target.closest('.modal_container'));
-      $container.removeClass('show-modal');
-    });
-
-    const ajax_url = $('input[name="ajax_url"]').val();
-
-    $buttons.on("click", (e) => {
-      const $target = $(e.currentTarget);
-      const id = $target.attr("data-modal-id");
-      $(`.modal_container[data-modal-id="${id}"]`).addClass('show-modal');
-      if (!ajax_url) return;
-      const data = {
-        action: 'kboard_snu_update_view_count_action',
-        uid: id,
-      };
-
-      $.post(ajax_url, data, (response) => {
-        if (!response.success) return;
-      });
-    });
-  });
-})(jQuery);
-
-(($) => {
-  document.addEventListener("DOMContentLoaded", () => {
-    const $button = $('.kboard-snu-clothing-menber-button-small');
-    const ajax_url = $('input[name="ajax_url"]').val();
-
-    $button.on("click", () => {
-      $.post(ajax_url, {
-        action: 'kboard_snu_clothing_menber_more_view_action',
-        board_id: 1,
-      }, (res) => {
-        console.log('res', res);
-      });
-    });
-  });
-})(jQuery);
-</script>
