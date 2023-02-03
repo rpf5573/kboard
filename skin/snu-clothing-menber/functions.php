@@ -169,9 +169,9 @@ if (!function_exists('kboard_snu_kboard_list_search_option')) {
 }
 
 // 커스텀 필드를 바탕으로 생성된 수많은 INNER_JOIN을 하나로 바꿔준다
-if (!function_exists('kboard_snu_reduce_inner_join')) {
-  add_filter('kboard_list_from', 'kboard_snu_reduce_inner_join', 1, 3);
-  function kboard_snu_reduce_inner_join($from_str, $board_id, $obj){
+if (!function_exists('kboard_snu_list_from')) {
+  add_filter('kboard_list_from', 'kboard_snu_list_from', 1, 3);
+  function kboard_snu_list_from($from_str, $board_id, $obj){
     global $wpdb;
     if (!isset($_REQUEST['keyword'])) return $from_str;
     if (empty($_REQUEST['keyword'])) return $from_str;
@@ -184,9 +184,9 @@ if (!function_exists('kboard_snu_reduce_inner_join')) {
 // 필드들을 넣으면 where절이 막 생기는데 이를 수정한다
 // 1. 검색어와 옵션검색을 AND로 연결하는데, 이것을 OR로 바꿔준다
 // 2. from 구문에서 INNER_JOIN을 하나 빼고 삭제했기 때문에, 커스텀 필드용 INNER_JOIN을 삭제하고 정식 INNER_JOIN 하나만 남겨놓는다
-if (!function_exists('kboard_snu_kboard_filter')) {
-  add_filter('kboard_list_where', 'kboard_snu_kboard_filter', 1, 3);
-  function kboard_snu_kboard_filter($query_str_where, $board_id, $obj) {
+if (!function_exists('kboard_snu_list_where')) {
+  add_filter('kboard_list_where', 'kboard_snu_list_where', 1, 3);
+  function kboard_snu_list_where($query_str_where, $board_id, $obj) {
     global $wpdb;
 
     if (!isset($_REQUEST['keyword'])) return $query_str_where;
@@ -233,9 +233,9 @@ if (!function_exists('kboard_snu_kboard_filter')) {
   }
 }
 
-if (!function_exists('kboard_snu_change_total_count')) {
-  add_filter('kboard_content_list_total_count', 'kboard_snu_change_total_count', 1, 3);
-  function kboard_snu_change_total_count($total, $board, $obj) {
+if (!function_exists('kboard_snu_content_list_total_count')) {
+  add_filter('kboard_content_list_total_count', 'kboard_snu_content_list_total_count', 1, 3);
+  function kboard_snu_content_list_total_count($total, $board, $obj) {
     global $wpdb;
     if (!isset($_REQUEST['keyword'])) return $total;
     if (empty($_REQUEST['keyword'])) return $total;
@@ -288,6 +288,19 @@ if (!function_exists('kboard_snu_change_total_count')) {
     $count = count($wpdb->get_results($query));
     return $count;
   }
+}
+
+if (!function_exists('kboard_snu_list_rpp')) {
+  add_filter('kboard_list_rpp', 'kboard_snu_list_rpp', 1, 3);
+  function kboard_snu_list_rpp($rpp, $board_id, $obj) {
+    if (!isset($_REQUEST['kboard_list_rpp'])) return $rpp;
+    if (empty($_REQUEST['kboard_list_rpp'])) return $rpp;
+
+    $_rpp = $_REQUEST['kboard_list_rpp'];
+    if (!is_int($_rpp)) return $rpp;
+
+    return $_rpp;
+  }  
 }
 
 // 검색 고도화 하기 - 끝
