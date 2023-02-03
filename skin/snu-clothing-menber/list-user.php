@@ -7,7 +7,9 @@ while($content = $list->hasNext()):
 <tr class="<?php if($content->uid == kboard_uid()):?>kboard-list-selected<?php endif?>">
 	<td class="kboard-list-uid"><?php echo $list->index();?></td>
 	<td class="kboard-list-title">
-			<?php if($content->attach->{'portrait'}[1]):?><div class="portrait"></div><?php else:?><div class="noimg"><img src="<?php echo $skin_path?>/noimg.jpg"></div><?php endif?>  <div class="name_area"><?php echo $content->title?> <span class="member_name">(<?php echo $content->option->{'Name_English'}?>, <?php echo $content->option->{'Name_Chinese'}?>)</span></div>
+			<?php if($content->attach->{'portrait'}[1]):?>
+        <div class="portrait"><img src="<?php echo $content->attach->{'portrait'}[0]; ?>" /></div>
+        <?php else:?><div class="noimg"><img src="<?php echo $skin_path?>/noimg.jpg"></div><?php endif?>  <div class="name_area"><?php echo $content->title?> <span class="member_name">(<?php echo $content->option->{'Name_English'}?>, <?php echo $content->option->{'Name_Chinese'}?>)</span></div>
 	</td>
 	<?php if($board->use_category && $board->initCategory1()):?>
 		<td class="kboard-list-category1">
@@ -45,7 +47,7 @@ while($content = $list->hasNext()):
           <div class="document_top_area">
             <div class="document_top_left"> <?php 
               if($content->attach->{'portrait'}[1]): ?>
-                <div class="portrait"></div> <?php
+                <div class="portrait"><img src="<?php echo $content->attach->{'portrait'}[0]; ?>" /></div> <?php
               else: ?>
                 <img src="<?php echo $skin_path?>/noimg.jpg"> <?php
               endif; ?>
