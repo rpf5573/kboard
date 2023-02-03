@@ -1,11 +1,11 @@
 SELECT COUNT(*)
 FROM `snuclothingmenber_kboard_board_content`
 INNER JOIN `snuclothingmenber_kboard_board_option`
-ON `snuclothingmenber_kboard_board_content`.`uid`=`snuclothingmenber_kboard_board_option`.`content_uid`
-WHERE `snuclothingmenber_kboard_board_content`.`board_id`='1'
-AND (`snuclothingmenber_kboard_board_content`.`title` LIKE '%가%'
-OR `snuclothingmenber_kboard_board_content`.`content` LIKE '%가%')
-OR ((`snuclothingmenber_kboard_board_option`.`option_key`='academic_change'
+ON `snuclothingmenber_kboard_board_content`.`uid` = `snuclothingmenber_kboard_board_option`.`content_uid`
+WHERE `snuclothingmenber_kboard_board_content`.`board_id` = '1'
+AND (( `snuclothingmenber_kboard_board_content`.`title` LIKE '%가%'
+OR `snuclothingmenber_kboard_board_content`.`content` LIKE '%가%' )
+OR (`snuclothingmenber_kboard_board_option`.`option_key`='academic_change'
 AND `snuclothingmenber_kboard_board_option`.`option_value` LIKE '%가%')
 OR (`snuclothingmenber_kboard_board_option`.`option_key`='student_id'
 AND `snuclothingmenber_kboard_board_option`.`option_value` LIKE '%가%')

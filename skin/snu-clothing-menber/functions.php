@@ -168,96 +168,6 @@ if (!function_exists('kboard_snu_kboard_list_search_option')) {
   }
 }
 
-// select_count문을 수정한다
-if (!function_exists('kboard_snu_change_select_count')) {
-  // add_filter('kboard_list_select_count', 'kboard_snu_change_select_count', 1, 3);
-  function kboard_snu_change_select_count($default, $board_id, $obj) {
-    global $wpdb;
-    if (!isset($_REQUEST['keyword'])) return $default;
-    if (empty($_REQUEST['keyword'])) return $default;
-
-    // return "`{$wpdb->prefix}kboard_board_content`.`uid`, SUM(1) as count_rows";
-    // return " count(*) RecordsPerGroup, COUNT(*) OVER () AS TotalRecords ";
-    return "COUNT(DISTINCT `{$wpdb->prefix}kboard_board_content`.`uid`)";
-  }
-}
-
-if (!function_exists('kboard_snu_change_total_count')) {
-  add_filter('kboard_content_list_total_count', 'kboard_snu_change_total_count', 1, 3);
-  function kboard_snu_change_total_count($total, $board, $obj) {
-    global $wpdb;
-    if (!isset($_REQUEST['keyword'])) return $total;
-    if (empty($_REQUEST['keyword'])) return $total;
-
-    $keyword = $_REQUEST['keyword'];
-    $prefix = $wpdb->prefix;
-    $board_id = $board->id;
-
-    // 여기 AND (( 주의!
-    $query = "
-      SELECT COUNT(*)
-      FROM `{$prefix}kboard_board_content`
-      INNER JOIN `{$prefix}kboard_board_option`
-      ON `{$prefix}kboard_board_content`.`uid` = `{$prefix}kboard_board_option`.`content_uid`
-      WHERE `{$prefix}kboard_board_content`.`board_id` = '{$board_id}'
-      AND ((
-        `{$prefix}kboard_board_content`.`title` LIKE '%{$keyword}%' 
-        OR `{$prefix}kboard_board_content`.`content` LIKE '%{$keyword}%'
-      )
-    ";
-
-    $custom_fields = kboard_snu_get_custom_fields();
-    $sub_where = [];
-    foreach($custom_fields as $field) {
-      $q = "`{$prefix}kboard_board_option`.`option_key`='{$field}' AND `{$prefix}kboard_board_option`.`option_value` LIKE '%{$keyword}%'";
-      $sub_where[] = ' OR (' . $q . ')';
-    }
-
-    $query = $query . implode('', $sub_where) . ')'; // 여기서 AND 끝내고
-
-    // 카테고리도 반영해주자
-    if (isset($_REQUEST['category1']) && !empty($_REQUEST['category1'])) {
-      $category1 = $_REQUEST['category1'];
-      $category1 = esc_sql($category1);
-			$query = $query . " AND `{$prefix}kboard_board_content`.`category1`='{$category1}'";
-    }
-
-    $query = $query . "
-      AND `{$prefix}kboard_board_content`.`notice`=''
-      AND (`{$prefix}kboard_board_content`.`status` IS NULL
-      OR `{$prefix}kboard_board_content`.`status`=''
-      OR `{$prefix}kboard_board_content`.`status`='pending_approval')
-      GROUP BY `{$prefix}kboard_board_content`.`uid`
-    ";
-
-    ray('query', $query);
-
-    $count = count($wpdb->get_results($query));
-    return $count;
-  }
-}
-
-// if (!function_exists('kboard_snu_list_total_count')) {
-//   add_filter('kboard_content_list_total_count', 'kboard_snu_list_total_count', 1, 3);
-//   function kboard_snu_list_total_count($total, $board, $this) {
-
-//   }
-// }
-
-// select문을 수정한다
-// if (!function_exists('kboard_snu_change_select')) {
-//   add_filter('kboard_list_select', 'kboard_snu_change_select', 1, 3);
-//   function kboard_snu_change_select($default, $board_id, $obj) {
-//     global $wpdb;
-
-//     if (!isset($_REQUEST['keyword'])) return $default;
-//     if (empty($_REQUEST['keyword'])) return $default;
-
-//     return 'DISTINCT `{$prefix}kboard_board_content`.`uid`';
-//     return "COUNT(DISTINCT `{$wpdb->prefix}kboard_board_content`.`uid`)";
-//   }
-// }
-
 // 커스텀 필드를 바탕으로 생성된 수많은 INNER_JOIN을 하나로 바꿔준다
 if (!function_exists('kboard_snu_reduce_inner_join')) {
   add_filter('kboard_list_from', 'kboard_snu_reduce_inner_join', 1, 3);
@@ -302,9 +212,69 @@ if (!function_exists('kboard_snu_kboard_filter')) {
 
     $new_where = $new_where . " GROUP BY `{$wpdb->prefix}kboard_board_content`.`uid`";
 
+    ray('new_where', $new_where);
+
     return $new_where;
   }
 }
+
+if (!function_exists('kboard_snu_change_total_count')) {
+  add_filter('kboard_content_list_total_count', 'kboard_snu_change_total_count', 1, 3);
+  function kboard_snu_change_total_count($total, $board, $obj) {
+    global $wpdb;
+    if (!isset($_REQUEST['keyword'])) return $total;
+    if (empty($_REQUEST['keyword'])) return $total;
+
+    $keyword = $_REQUEST['keyword'];
+    $prefix = $wpdb->prefix;
+    $board_id = $board->id;
+
+    // 여기 AND (( 주의!
+    $query = "
+      SELECT COUNT(*)
+      FROM `{$prefix}kboard_board_content`
+      INNER JOIN `{$prefix}kboard_board_option`
+      ON `{$prefix}kboard_board_content`.`uid` = `{$prefix}kboard_board_option`.`content_uid`
+      WHERE `{$prefix}kboard_board_content`.`board_id` = '{$board_id}'
+    ";
+
+    // 카테고리도 반영해주자
+    if (isset($_REQUEST['category1']) && !empty($_REQUEST['category1'])) {
+      $category1 = $_REQUEST['category1'];
+      $category1 = esc_sql($category1);
+			$query = $query . " AND `{$prefix}kboard_board_content`.`category1`='{$category1}'";
+    }
+
+    $query = $query . "
+      AND (
+        (
+          `{$prefix}kboard_board_content`.`title` LIKE '%{$keyword}%' 
+          OR `{$prefix}kboard_board_content`.`content` LIKE '%{$keyword}%'
+        )
+    ";
+
+    $custom_fields = kboard_snu_get_custom_fields();
+    $sub_where = [];
+    foreach($custom_fields as $field) {
+      $q = "`{$prefix}kboard_board_option`.`option_key`='{$field}' AND `{$prefix}kboard_board_option`.`option_value` LIKE '%{$keyword}%'";
+      $sub_where[] = ' OR (' . $q . ')';
+    }
+
+    $query = $query . implode('', $sub_where) . ')'; // 여기서 AND 끝내고
+
+    $query = $query . "
+      AND `{$prefix}kboard_board_content`.`notice`=''
+      AND (`{$prefix}kboard_board_content`.`status` IS NULL
+      OR `{$prefix}kboard_board_content`.`status`=''
+      OR `{$prefix}kboard_board_content`.`status`='pending_approval')
+      GROUP BY `{$prefix}kboard_board_content`.`uid`
+    ";
+
+    $count = count($wpdb->get_results($query));
+    return $count;
+  }
+}
+
 // 검색 고도화 하기 - 끝
 
 
