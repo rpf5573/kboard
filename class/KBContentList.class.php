@@ -188,14 +188,10 @@ class KBContentList {
 			$this->rpp = 10;
 		}
 		else{
-			$this->rpp = $rpp;
+			$this->rpp = apply_filters('kboard_list_rpp', $rpp, $this->board_id, $this);
 		}
 		return $this;
 	}
-
-  public function getRpp() {
-    return $this->rpp;
-  }
 	
 	/**
 	 * 카테고리1을 입력한다.
