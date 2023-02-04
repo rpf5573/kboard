@@ -254,7 +254,7 @@
 			<?php if(isset($field['description']) && $field['description']):?><div class="description"><?php echo esc_html($field['description'])?></div><?php endif?>
 		</div>
 	</div>
-<?php elseif($field['field_type'] == 'file'): ray('content->attach', $content->attach); ?>
+<?php elseif($field['field_type'] == 'file'): ?>
 	<div class="kboard-attr-row <?php echo esc_attr($field['class'])?> meta-key-<?php echo esc_attr($meta_key)?>">
 		<label class="attr-name" for="<?php echo esc_attr($meta_key)?>"><span class="field-name"><?php echo esc_html($field_name)?></span></label>
 		<div class="attr-value"> <?php 

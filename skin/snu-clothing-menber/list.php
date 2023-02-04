@@ -219,6 +219,7 @@ else: ?>
 
   if (current_user_can('manage_kboard')) { ?>
     <form method="GET" action="/">
+      <input type="hidden" name="board_id_for_xlsx_download" value="<?php echo $board->id; ?>" />
       <input type="hidden" name="kboard_snu_xlsx_download" value="1" /> <?php
       wp_nonce_field( 'kboard_snu_xlsx_download_action', 'kboard_snu_xlsx_download_nonce' ); ?>
       <button type="submit">Download Excel</button>

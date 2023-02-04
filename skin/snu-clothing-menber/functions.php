@@ -358,7 +358,7 @@ if (!function_exists('kboard_snu_download_xlsx')) {
     if (!current_user_can('manage_kboard')) wp_die(__('You do not have permission.', 'kboard'));
     if (!wp_verify_nonce( $_GET['kboard_snu_xlsx_download_nonce'], 'kboard_snu_xlsx_download_action' )) wp_die(__('Invalid Access', 'kboard'));
 
-    $board_id = isset($_GET['board_id'])?$_GET['board_id']:'';
+    $board_id = isset($_GET['board_id_for_xlsx_download'])?$_GET['board_id_for_xlsx_download']:'';
     $board = new KBoard($board_id);
 
     if ($board->id) {
@@ -535,7 +535,7 @@ if (!function_exists('kboard_snu_download_xlsx')) {
       @ob_end_clean();
       $writer = new Xlsx($spreadsheet);
 
-      $filename = 'users' . Date('Y-m-d H:i:s ') . '.xlsx';
+      $filename = 'users' . Date('Y-m-d H:i:s') . '.xlsx';
 
       header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       header('Content-Disposition: attachment;filename="' . $filename . '"');
