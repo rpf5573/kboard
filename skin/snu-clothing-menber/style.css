@@ -1619,3 +1619,7 @@ button.kboard-snu-clothing-menber-button-small:active {
     text-align: left;
   }
 }
+
+.invisible {
+  display: none;
+}

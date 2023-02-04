@@ -92,6 +92,7 @@ function kboard_toggle_password_field(checkbox) {
     alt: "Placeholder Image",
     id: "preview",
   });
+  $image.addClass("invisible");
   $container.prepend($image);
   $input.change(() => {
     const input = $input[0];
@@ -99,6 +100,7 @@ function kboard_toggle_password_field(checkbox) {
       const reader = new FileReader();
       reader.onload = (e) => {
         $($container.find("#preview")).attr("src", e.target.result);
+        $image.removeClass("invisible");
       };
       reader.readAsDataURL(input.files[0]);
     }
