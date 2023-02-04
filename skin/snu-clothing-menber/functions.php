@@ -1,7 +1,7 @@
 <?php
 if(!defined('ABSPATH')) exit;
 
-require_once './vendor/autoload.php';
+require_once dirname(__DIR__) . '/snu-clothing-menber/vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
