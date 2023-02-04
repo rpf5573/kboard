@@ -217,6 +217,7 @@ else: ?>
   <input type="hidden" name="ajax_url" value="<?php echo admin_url('admin-ajax.php'); ?>" />
   <input type="hidden" name="board_id" value="<?php echo $board->id; ?>" /> <?php
 
+  // 엑셀 파일 다운로드 버튼
   if (current_user_can('manage_kboard')) { ?>
     <form method="GET" action="/">
       <input type="hidden" name="board_id_for_xlsx_download" value="<?php echo $board->id; ?>" />

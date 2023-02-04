@@ -1,7 +1,7 @@
 <?php
 if(!defined('ABSPATH')) exit;
 
-// require_once ABSPATH . 'vendor/autoload.php';
+require_once './vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -351,6 +351,7 @@ if (!function_exists('kboard_snu_get_list_count_by_category')) {
   }
 }
 
+// 엑셀 다운로드 기능을 추가한다
 if (!function_exists('kboard_snu_download_xlsx')) {
   add_action('init', 'kboard_snu_download_xlsx');
   function kboard_snu_download_xlsx() {
