@@ -411,7 +411,7 @@ if (!function_exists('kboard_snu_download_xlsx')) {
           'option_key' => 'student_id'
         ),
         'L' => array(
-          'col_name' => '한글성명',
+          'col_name' => '이름',
           'option_key' => 'title'
         ),
         'M' => array(
@@ -527,6 +527,13 @@ if (!function_exists('kboard_snu_download_xlsx')) {
             if ($option_key === 'uid') {
               $option_value = $content->uid;
             }
+            if ($option_key === 'title') {
+              $option_value = $content->row->title;
+            }
+            if ($option_key === 'content') {
+              $option_value = $content->row->content;
+            }
+            
             $sheet->setCellValue("{$col}{$index}", $option_value);
           }
         }
